@@ -1,8 +1,5 @@
-# paap-groovy-template
-Maven project template for groovy project
+# Model builder
 
-<code>$ mvn clean package && java -jar target/hello-1.0.0-SNAPSHOT.jar</code>
-
-ou
-
-<code>$ mvn clean test</code>
+Goals: 
+- build a basic API/Web server based on a entity-relation data model (springboot + )
+- manage basic persistence based on this model (mongodb)
