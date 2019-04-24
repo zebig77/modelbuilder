@@ -3,11 +3,14 @@ package datamodel
 class Property {
 
     final String name
-    String type = "string"; // default
-    String instance_of;
+    String type = "string" // default
+    String instance_of
+    boolean is_unique = false
+    boolean is_key = false
+    boolean is_sequence = false
 
-    Property(String dgp_name) {
-        this.name = dgp_name
+    Property(String name) {
+        this.name = name
     }
 
     Property as_number() {
@@ -20,8 +23,25 @@ class Property {
         return this
     }
 
-    Property instance_of(dg_name) {
-        this.instance_of = dg_name
+    Property instance_of(entity_name) {
+        this.instance_of = entity_name
+        return this
+    }
+
+    Property unique() {
+        this.is_unique = true
+        return this
+    }
+
+    Property as_key() {
+        this.is_key = true
+        return this
+    }
+
+    Property as_sequence() {
+        this.is_sequence = true
+        this.type = "number"
+        this.is_unique = true
         return this
     }
 

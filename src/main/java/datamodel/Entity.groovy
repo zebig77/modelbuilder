@@ -5,23 +5,30 @@ class Entity {
     final String name
 
     Map<String,Property> properties = [:]
+    Map<String,Relation> relations = [:]
 
-    Entity(String dg_name) {
-        this.name = dg_name
+    Entity(String name) {
+        this.name = name
     }
 
     // property creation
-    Property p(String dgp_name) {
-        if (!properties.containsKey(dgp_name)) {
-            properties[dgp_name] = new Property(dgp_name)
+    Property p(String property_name) {
+        if (!properties.containsKey(property_name)) {
+            properties[property_name] = new Property(property_name)
         }
-        return properties[dgp_name]
+        return properties[property_name]
     }
 
     // relation creation
-    Relation r(String ename) {
-
+    Relation r(String target_name) {
+        if (!relations.containsKey(target_name)) {
+            relations[target_name] = new Relation(target_name)
+        }
+        return relations[target_name]
     }
 
+    void sample(Object ... values) {
+        // TODO
+    }
 
 }
