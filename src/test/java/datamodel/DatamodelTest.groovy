@@ -22,7 +22,12 @@ class DatamodelTest extends GroovyTestCase {
                 sample("Breaking Bad",1,"20/01/2008")
                 sample("Better Call Saul", 1, "08/02/2015")
             }
-            e("Acteur")
+            e("Acteur").with {
+                p("Nom").as_key()
+                p("Prénom").as_key()
+                p("Date de naissance").as_date()
+                p("Date de décès").as_date().nullable()
+            }
             e("Diffuseur")
             e("Genre").with {
                 p("Genre").as_key().unique()

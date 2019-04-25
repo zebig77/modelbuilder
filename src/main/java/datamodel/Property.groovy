@@ -8,6 +8,7 @@ class Property {
     boolean is_unique = false
     boolean is_key = false
     boolean is_sequence = false
+    boolean is_nullable = false
 
     Property(String name) {
         this.name = name
@@ -30,6 +31,11 @@ class Property {
 
     Property unique() {
         this.is_unique = true
+        return this
+    }
+
+    Property nullable() {
+        this.is_nullable = true
         return this
     }
 

@@ -37,6 +37,15 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
+   void testNullable() {
+      new Entity("test").with {
+         p("A")
+         assert !p("A").is_nullable
+         p("B").nullable()
+         assert p("B").is_nullable
+      }
+   }
+
    void testSequence() {
       new Entity("test").with {
          p("Rang").as_sequence()
