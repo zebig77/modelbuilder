@@ -23,4 +23,9 @@ class Relation {
         target_max = "1"
         return this
     }
+
+    // for many_to_many relationships
+    void sample(Object ... values) {
+        // TODO
+    }
 }

@@ -27,6 +27,14 @@ class DatamodelTest extends GroovyTestCase {
                 p("Prénom").as_key()
                 p("Date de naissance").as_date()
                 p("Date de décès").as_date().nullable()
+                r("Saison").one_to_many().with {
+                    // sample() TODO
+                }
+                sample("Harington", "Kit", "26/12/1986")
+                sample("Dinklage", "Peter", "11/06/1969")
+                sample("Clarke", "Emilia", "23/10/1986")
+                sample("Cranston", "Bryan", "07/03/1956")
+                sample("Gunn", "Anna", "11/08/1968")
             }
             e("Diffuseur")
             e("Genre").with {
