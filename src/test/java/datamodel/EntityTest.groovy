@@ -5,7 +5,8 @@ class EntityTest extends GroovyTestCase {
    void testNew() {
       new Entity("test").with {
          assert name == "test"
-         assert properties == [:]
+         assert p_names == []
+         assert p_map == [:]
       }
    }
 
@@ -13,7 +14,10 @@ class EntityTest extends GroovyTestCase {
       new Entity("test").with {
          p("Nom")
          p("Prénom")
-         assert properties.size() == 2
+         assert p_names.size() == 2
+         assert p_map.size() == 2
+         assert p_names.contains("Nom")
+         assert p_names.contains("Prénom")
       }
    }
 
@@ -63,19 +67,11 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testRelation() {
+   void testReference() {
       new Entity("test").with {
-         r("test2").one_to_many()
-         assert relations.containsKey("test2")
-         assert r("test2").target_min == "1"
-         assert r("test2").target_max == "N"
-      }
-      new Entity("test2").with {
-         r("test").as_parent().with {
-            assert is_parent
-            assert target_min == "1"
-            assert target_max == "1"
-         }
+         assertNull( p("dummy").instance_of )
+         p("FK").instance_of("Foreign Key")
+         assert p("FK").instance_of == "Foreign Key"
       }
    }
 

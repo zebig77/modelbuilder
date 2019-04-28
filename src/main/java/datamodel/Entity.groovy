@@ -4,8 +4,9 @@ class Entity {
 
     final String name
 
-    Map<String,Property> properties = [:]
-    Map<String,Relation> relations = [:]
+    def p_names = []
+    Map<String,Property> p_map = [:]
+    def samples = []
 
     Entity(String name) {
         this.name = name
@@ -13,22 +14,16 @@ class Entity {
 
     // property creation
     Property p(String property_name) {
-        if (!properties.containsKey(property_name)) {
-            properties[property_name] = new Property(property_name)
+        if (!p_map.containsKey(property_name)) {
+            p_names << property_name
+            p_map[property_name] = new Property(property_name)
         }
-        return properties[property_name]
+        return p_map[property_name]
     }
 
-    // relation creation
-    Relation r(String target_name) {
-        if (!relations.containsKey(target_name)) {
-            relations[target_name] = new Relation(target_name)
-        }
-        return relations[target_name]
-    }
-
-    void sample(Object ... values) {
-        // TODO
+    // sample creation
+    void s(String jsonSample) {
+        samples << jsonSample
     }
 
 }
