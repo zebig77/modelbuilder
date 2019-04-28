@@ -40,9 +40,9 @@ class DatamodelTest extends GroovyTestCase {
             r("Actor", "Season").zero_to_many()
 
             // Samples
-            e("TV Series").s '{ Name:"Game of Throne", "Genre":"Fantasy" }'
-            e("TV Series").s '{ Name:"Breaking Bad", "Genre":"Crime" }'
-            e("TV Series").s '{ Name:"Better Call Saul", "Genre":"Crime" }'
+            e("TV Series").s '{ "Name":"Game of Throne", "Genre":"Fantasy" }'
+            e("TV Series").s '{ "Name":"Breaking Bad", "Genre":"Crime" }'
+            e("TV Series").s '{ "Name":"Better Call Saul", "Genre":"Crime" }'
 
             e("Author").s    '{ "First name":"David", "Last name":"Benioff", "Birth date":"25/09/1970" }'
             e("Author").s    '{ "First name":"Daniel Brett", "Last name":"Weiss", "Birth date":"23/04/1971" }'
@@ -79,22 +79,23 @@ class DatamodelTest extends GroovyTestCase {
             r("TV Series","Season").s '{ "Better Call Saul", 4, "06/08/2018", 10 }'
 
             (1..8).each { season ->
-                r("Season", "Actor").s "{ 'Game of Throne', $season, 'Kit', 'Harington' }"
-                r("Season", "Actor").s "{ 'Game of Throne', $season, 'Peter', 'Dinklage' }"
-                r("Season", "Actor").s "{ 'Game of Throne', $season, 'Emilia', 'Clarke' }"
+                r("Season", "Actor").s '{ "Game of Throne", '+season+', "Kit", "Harington" }'
+                r("Season", "Actor").s '{ "Game of Throne", '+season+', "Peter", "Dinklage" }'
+                r("Season", "Actor").s '{ "Game of Throne", '+season+', "Emilia", "Clarke" }'
             }
 
             (1..5).each { season ->
-                r("Season", "Actor").s "{ 'Breaking Bad', $season, 'Bryan', 'Cranston' }"
-                r("Season", "Actor").s "{ 'Breaking Bad', $season, 'Anna', 'Gunn' }"
-                r("Season", "Actor").s "{ 'Breaking Bad', $season, 'Bob', 'Odenkirk' }"
+                r("Season", "Actor").s '{ "Breaking Bad", '+season+', "Bryan", "Cranston" }'
+                r("Season", "Actor").s '{ "Breaking Bad", '+season+', "Anna", "Gunn" }'
+                r("Season", "Actor").s '{ "Breaking Bad", '+season+', "Bob", "Odenkirk" }'
             }
 
             (1..4).each { season ->
-                r("Season", "Actor").s "{ 'Better Call Saul', $season, 'Bob', 'Odenkirk' }"
-                r("Season", "Actor").s "{ 'Better Call Saul', $season, 'Rhea', 'Seehorn' }"
+                r("Season", "Actor").s '{ "Better Call Saul", $season, "Bob", "Odenkirk" }'
+                r("Season", "Actor").s '{ "Better Call Saul", $season, "Rhea", "Seehorn" }'
             }
 
+            assert validate()
         }
 
     }

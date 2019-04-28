@@ -41,4 +41,8 @@ class Relation {
     void s(String jsonSample) {
         samples << jsonSample
     }
+
+    String toString() {
+        return "$source_name -> $target_name"
+    }
 }
