@@ -1,8 +1,16 @@
 package datamodel
 
-import javax.xml.crypto.Data
+import org.apache.log4j.BasicConfigurator
 
 class DatamodelTest extends GroovyTestCase {
+
+    void test_bad_datamodel() {
+        BasicConfigurator.configure();
+        new Datamodel("BAD").with {
+            r("E1","E2")
+            assert !validate()
+        }
+    }
 
     void test_datamodel() {
 

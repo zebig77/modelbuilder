@@ -1,10 +1,14 @@
 package datamodel
 
 import groovy.json.JsonSlurper
+import org.apache.log4j.Logger
+import org.apache.log4j.BasicConfigurator
 
 class Datamodel {
 
     final String model_name
+    static final Logger logger = Logger.getLogger(Datamodel.class)
+
 
     def e_names = [] // entity names
     Map<String, Entity> e_map = [:] // entity maps
@@ -73,7 +77,11 @@ class Datamodel {
                 }
             }
         }
-        if (!valid) println messages
+        if (!valid) {
+            messages.each {
+                logger.error(it)
+            }
+        }
         return valid
     }
 }
