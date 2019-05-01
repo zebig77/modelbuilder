@@ -78,9 +78,7 @@ class Datamodel {
             }
         }
         if (!valid) {
-            messages.each {
-                logger.error(it)
-            }
+            messages.each { logger.error(it) }
         }
         return valid
     }

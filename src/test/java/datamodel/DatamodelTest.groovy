@@ -1,18 +1,38 @@
 package datamodel
 
 import org.apache.log4j.BasicConfigurator
+import org.junit.Before
+import org.junit.Test
 
-class DatamodelTest extends GroovyTestCase {
+class DatamodelTest {
 
-    void test_bad_datamodel() {
-        BasicConfigurator.configure();
-        new Datamodel("BAD").with {
+    @Test
+    void bad_relation() {
+        new Datamodel("bad_relation").with {
             r("E1","E2")
-            assert !validate()
+            def errors = []
+            assert !validate(errors)
+            assert errors.size() == 2
+            assert errors.find {it.contains("Relation E1 -> E2 refers to non-existent source entity 'E1'")} != null
+            assert errors.find {it.contains("Relation E1 -> E2 refers to non-existent target entity 'E2'")} != null
         }
     }
 
-    void test_datamodel() {
+    @Test
+    void bad_json() {
+        new Datamodel("bad_json").with {
+            e("E1").with {
+                s("zboub")
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.find {it.contains("not a valid JSON")} != null
+            assert errors.size() == 1
+        }
+    }
+
+    @Test
+    void good_datamodel() {
 
         new Datamodel("TV Series").with {
 
