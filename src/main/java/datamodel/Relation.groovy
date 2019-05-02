@@ -2,6 +2,7 @@ package datamodel
 
 class Relation {
 
+    static all_relations = []
     final String source_name // source entity name
     final String target_name // target entity name
     int source_min
@@ -13,10 +14,14 @@ class Relation {
     def samples = []
 
     Relation(String source_name, String target_name) {
+        if (all_relations.contains("$source_name -> $target_name")) {
+            throw new Exception("Duplicate relation $source_name -> $target_name")
+        }
         this.source_name = source_name
         this.target_name = target_name
         source_min = 1
         source_max = 1
+        all_relations << "$source_name -> $target_name"
     }
 
     Relation one_to_many() {

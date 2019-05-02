@@ -2,7 +2,6 @@ package datamodel
 
 import groovy.json.JsonSlurper
 import org.apache.log4j.Logger
-import org.apache.log4j.BasicConfigurator
 
 class Datamodel {
 
