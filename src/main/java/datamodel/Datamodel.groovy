@@ -9,9 +9,8 @@ class Datamodel {
     static final Logger logger = Logger.getLogger(Datamodel.class)
 
 
-    def e_names = [] // entity names
     Map<String, Entity> e_map = [:] // entity maps
-    ArrayList<Relation> relations = []
+    Map<String, Relation> r_map = [:] // relation maps
 
     Datamodel(String model_name) {
         this.model_name = model_name
@@ -20,24 +19,25 @@ class Datamodel {
     // entity creation
     Entity e(String entity_name) {
         if (!e_map.containsKey(entity_name)) {
-            e_names << entity_name
             e_map[entity_name] = new Entity(entity_name)
         }
         return e_map[entity_name]
     }
 
     Relation r(String source_entity_name, String target_entity_name) {
-        def new_r = new Relation(source_entity_name,target_entity_name)
-        relations << new_r
-        return new_r
+        String relation_name = "$source_entity_name -> $target_entity_name"
+        if (!r_map.containsKey(relation_name)) {
+            r_map[relation_name] = new Relation(source_entity_name,target_entity_name)
+        }
+        return r_map[relation_name]
     }
 
-    boolean validate(ArrayList<String> messages = []) {
+    boolean validate(messages = []) {
 
         boolean valid = true
 
         // check that relations refer to existing entities
-        relations.each { Relation r ->
+        r_map.each { String relation_name, Relation r ->
             if (!e_map.containsKey(r.source_name)) {
                 messages << "Relation $r refers to non-existent source entity '$r.source_name'"
                 valid = false
@@ -51,16 +51,16 @@ class Datamodel {
         // Check the samples
         def jsonSlurper = new JsonSlurper()
         e_map.each { String e_name, Entity e ->
-            e.samples.each { String jsonSample ->
+            e.samples.each { jsonSample ->
                 Map sample_map
                 try {
-                    def object = jsonSlurper.parseText(jsonSample)
+                    def object = jsonSlurper.parseText(jsonSample as String)
                     if (!object instanceof Map) {
                         messages << "Invalid sample '$jsonSample' : not a map"
                         valid = false
                         return // next sample
                     }
-                    sample_map = object
+                    sample_map = object as Map
                 }
                 catch (Exception json_e) {
                     messages << "Invalid sample '$jsonSample' : not a valid JSON"
