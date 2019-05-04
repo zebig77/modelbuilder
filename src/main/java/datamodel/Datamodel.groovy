@@ -9,8 +9,8 @@ class Datamodel {
     static final Logger logger = Logger.getLogger(Datamodel.class)
 
 
-    Map<String, Entity> e_map = [:] // entity maps
-    Map<String, Relation> r_map = [:] // relation maps
+    Map<String, Entity> entities = [:] // entity maps
+    Map<String, Relation> relations = [:] // relation maps
 
     Datamodel(String model_name) {
         this.model_name = model_name
@@ -18,18 +18,18 @@ class Datamodel {
 
     // entity creation
     Entity e(String entity_name) {
-        if (!e_map.containsKey(entity_name)) {
-            e_map[entity_name] = new Entity(entity_name)
+        if (!entities.containsKey(entity_name)) {
+            entities[entity_name] = new Entity(entity_name)
         }
-        return e_map[entity_name]
+        return entities[entity_name]
     }
 
     Relation r(String source_entity_name, String target_entity_name) {
         String relation_name = "$source_entity_name -> $target_entity_name"
-        if (!r_map.containsKey(relation_name)) {
-            r_map[relation_name] = new Relation(source_entity_name,target_entity_name)
+        if (!relations.containsKey(relation_name)) {
+            relations[relation_name] = new Relation(source_entity_name,target_entity_name)
         }
-        return r_map[relation_name]
+        return relations[relation_name]
     }
 
     boolean validate(messages = []) {
@@ -37,12 +37,12 @@ class Datamodel {
         boolean valid = true
 
         // check that relations refer to existing entities
-        r_map.each { String relation_name, Relation r ->
-            if (!e_map.containsKey(r.source_name)) {
+        relations.each { String relation_name, Relation r ->
+            if (!entities.containsKey(r.source_name)) {
                 messages << "Relation $r refers to non-existent source entity '$r.source_name'"
                 valid = false
             }
-            if (!e_map.containsKey(r.target_name)) {
+            if (!entities.containsKey(r.target_name)) {
                 messages << "Relation $r refers to non-existent target entity '$r.target_name'"
                 valid = false
             }
@@ -50,7 +50,7 @@ class Datamodel {
 
         // Check the samples
         def jsonSlurper = new JsonSlurper()
-        e_map.each { String e_name, Entity e ->
+        entities.each { String e_name, Entity e ->
             e.samples.each { jsonSample ->
                 Map sample_map
                 try {
@@ -76,6 +76,9 @@ class Datamodel {
                 }
             }
         }
+
+        // TODO check relation samples
+
         if (!valid) {
             messages.each { logger.error(it) }
         }

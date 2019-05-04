@@ -21,9 +21,21 @@ class Entity {
         return p_map[property_name]
     }
 
-    // sample creation
+    // sample creation with json input s('{ "A":1, "B":"deux", etc. }')
     void s(String jsonSample) {
         samples << jsonSample
+    }
+
+    // sample creation with named arguments s( A:1, B:"deux", etc. )
+    void s(Map args) {
+        StringBuffer sb = new StringBuffer()
+        boolean first = true
+        args.each { k, v ->
+            if (!first) { sb << ', '  }
+            first = false
+            sb << '"'+k+'":"'+v.toString()+'"'
+        }
+        s("{ ${sb.toString()} }")
     }
 
 }
