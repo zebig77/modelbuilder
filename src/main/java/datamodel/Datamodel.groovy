@@ -53,6 +53,7 @@ class Datamodel {
         entities.each { String e_name, Entity e ->
             e.samples.each { jsonSample ->
                 Map sample_map
+                // check sample json format
                 try {
                     def object = jsonSlurper.parseText(jsonSample as String)
                     if (!object instanceof Map) {
@@ -67,11 +68,20 @@ class Datamodel {
                     valid = false
                     return // next sample
                 }
+                // check that sample property names match entity property names
                 sample_map.each { p_name, p_value ->
-                    if (!e.p_map.containsKey(p_name)) {
+                    if (!e.properties.containsKey(p_name)) {
                         messages << "Invalid sample '$jsonSample' : '$p_name' is not a property name"
                         valid = false
-                        return
+                    }
+                }
+                // check that mandatory entity properties have a sample value
+                e.properties.each { String p_name, Property p ->
+                    if (!p.is_nullable) {
+                        if (!sample_map.containsKey(p_name)) {
+                            messages << "Invalid sample '$jsonSample' : mandatory property '$p_name' has no sample value"
+                            valid = false
+                        }
                     }
                 }
             }

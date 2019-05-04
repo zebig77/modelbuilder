@@ -13,8 +13,8 @@ class DatamodelTest {
             def errors = []
             assert !validate(errors)
             assert errors.size() == 2
-            assert errors.find { it.contains("Relation E1 -> E2 refers to non-existent source entity 'E1'") } != null
-            assert errors.find { it.contains("Relation E1 -> E2 refers to non-existent target entity 'E2'") } != null
+            assert errors.any { it.contains("Relation E1 -> E2 refers to non-existent source entity 'E1'") }
+            assert errors.any { it.contains("Relation E1 -> E2 refers to non-existent target entity 'E2'") }
         }
     }
 
@@ -26,7 +26,7 @@ class DatamodelTest {
             }
             def errors = []
             assert !validate(errors)
-            assert errors.find { it.contains("not a valid JSON") } != null
+            assert errors.any { it.contains("not a valid JSON") }
             assert errors.size() == 1
         }
     }
@@ -67,7 +67,30 @@ class DatamodelTest {
             e("E1").with {
                 p("A")
                 p("B")
+                s(A:"hello", B:"World") // should be OK
+                s(A:"hello2", B:"OK", C:"my bad!") // should not be OK
             }
+            def errors = []
+            assert !validate(errors)
+            assert errors.any { it.contains("'C' is not a property name") }
+            assert errors.size() == 1
+        }
+    }
+
+    @Test
+    void bad_sample_missing_value() {
+        new Datamodel("bad_sample_missing_value").with {
+            e("E1").with {
+                p("A")
+                p("B").nullable()
+                p("C")
+                s(A:1, C:"trois") // should cause no problem
+                s(A:2, B:"two") // C is missing
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.any { it.contains("mandatory property 'C' has no sample value") }
+            assert errors.size() == 1
         }
     }
 

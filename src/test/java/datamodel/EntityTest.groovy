@@ -6,7 +6,7 @@ class EntityTest extends GroovyTestCase {
       new Entity("test").with {
          assert name == "test"
          assert p_names == []
-         assert p_map == [:]
+         assert properties == [:]
       }
    }
 
@@ -15,7 +15,7 @@ class EntityTest extends GroovyTestCase {
          p("Nom")
          p("Prénom")
          assert p_names.size() == 2
-         assert p_map.size() == 2
+         assert properties.size() == 2
          assert p_names.contains("Nom")
          assert p_names.contains("Prénom")
       }

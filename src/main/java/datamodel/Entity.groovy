@@ -4,8 +4,8 @@ class Entity {
 
     final String name
 
-    def p_names = []
-    Map<String,Property> p_map = [:]
+    def p_names = [] // record property definition order
+    Map<String,Property> properties = [:]
     def samples = []
 
     Entity(String name) {
@@ -14,11 +14,11 @@ class Entity {
 
     // property creation
     Property p(String property_name) {
-        if (!p_map.containsKey(property_name)) {
+        if (!properties.containsKey(property_name)) {
             p_names << property_name
-            p_map[property_name] = new Property(property_name)
+            properties[property_name] = new Property(property_name)
         }
-        return p_map[property_name]
+        return properties[property_name]
     }
 
     // sample creation with json input s('{ "A":1, "B":"deux", etc. }')
