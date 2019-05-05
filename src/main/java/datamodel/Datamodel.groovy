@@ -49,61 +49,50 @@ class Datamodel {
         }
 
         // Check the samples
-        def jsonSlurper = new JsonSlurper()
         entities.each { String e_name, Entity e ->
             def keys = []
-            e.samples.each { jsonSample ->
-                Map sample_map
-                // check sample json format
-                try {
-                    def object = jsonSlurper.parseText(jsonSample as String)
-                    if (!object instanceof Map) {
-                        messages << "Invalid sample '$jsonSample' : not a map"
-                        valid = false
-                        return // next sample
-                    }
-                    sample_map = object as Map
-                }
-                catch (Exception json_e) {
-                    messages << "Invalid sample '$jsonSample' : not a valid JSON"
+            e.samples.each { sample ->
+                // check that sample size = properties
+                if (sample.size() != e.p_names.size()) {
+                    messages << "Invalid sample '$sample' : expecting a sample with ${e.p_names.size()} values"
                     valid = false
-                    return // next sample
+                    return // next sample no need to check the rest
                 }
-                // check that sample property names match entity property names
-                sample_map.each { p_name, p_value ->
-                    if (!e.properties.containsKey(p_name)) {
-                        messages << "Invalid sample '$jsonSample' : '$p_name' is not a property name"
+                // check that mandatory properties have a sample value
+                for(int i = 0; i < e.p_names.size(); i++) {
+                    String p_name = e.p_names[i]
+                    Property p = e.properties[p_name]
+                    if (!p.is_nullable && sample[i] == null) {
+                        messages << "Invalid sample '$sample' : mandatory property '$p_name' has no sample value"
                         valid = false
-                    }
-                }
-                // check that mandatory entity properties have a sample value
-                e.properties.each { String p_name, Property p ->
-                    if (!p.is_nullable) {
-                        if (!sample_map.containsKey(p_name)) {
-                            messages << "Invalid sample '$jsonSample' : mandatory property '$p_name' has no sample value"
-                            valid = false
-                        }
                     }
                 }
                 // check that key values are unique
                 def key = [:]
-                sample_map.each { p_name, p_value ->
-                    if (e.properties.get(p_name)?.is_key) {
+                for(int i = 0; i < e.p_names.size(); i++) {
+                    String p_name = e.p_names[i]
+                    def p_value = sample[i]
+                    if (e.properties.get(p_name).is_key) {
                         key[p_name] = p_value
                     }
                 }
                 if (!key.isEmpty()) {
                     if (keys.any { it == key }) {
-                        messages << "Invalid sample '$jsonSample' : duplicate key $key"
+                        messages << "Invalid sample '$sample' : duplicate key $key"
                         valid = false
                     } else {
                         keys << key
                     }
                 }
+                // TODO check value type
             }
         }
 
         // TODO check relation samples
+        relations.each { r_name, r ->
+
+
+        }
 
         if (!valid) {
             messages.each { logger.error(it) }

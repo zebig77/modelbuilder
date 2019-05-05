@@ -1,5 +1,7 @@
 package datamodel
 
+import java.text.SimpleDateFormat
+
 class Property {
 
     final String name
@@ -9,6 +11,7 @@ class Property {
     boolean is_key = false
     boolean is_sequence = false
     boolean is_nullable = false
+    String format
 
     Property(String name) {
         this.name = name
@@ -19,8 +22,10 @@ class Property {
         return this
     }
 
-    Property as_date() {
+    Property as_date(String date_format = "dd/MM/yyyy") {
         this.type = "date"
+        new SimpleDateFormat(date_format) // check is valid
+        this.format = date_format
         return this
     }
 

@@ -37,10 +37,15 @@ class Relation {
         return this
     }
 
-    // for many_to_many relationships
-    void s(String jsonSample) {
-        samples << jsonSample
+    // for ...to_many relationships
+    void s(Object... sample) {
+        if (target_max != N) {
+            throw new Exception("Invalid sample '$sample' : only 'X to many' relationships may have samples")
+        }
+        samples << sample
     }
+
+    // TODO manage relations with non-key properties ? maybe
 
     String toString() {
         return "$source_name -> $target_name"
