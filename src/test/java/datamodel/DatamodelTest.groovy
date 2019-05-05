@@ -95,6 +95,25 @@ class DatamodelTest {
     }
 
     @Test
+    void bad_sample_duplicate_keys() {
+        new Datamodel("bad_sample_duplicate_keys").with {
+            e("E1").with {
+                p("A").as_key()
+                p("B").as_key()
+                p("C")
+                s(A:1, B:"2", C:"XXX")
+                s(A:1, B:"22", C:"ZZZ")
+                s(A:1, B:"2", C:"YYY") // duplicate key
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.any { it.contains("duplicate key [A:1, B:2]") }
+            assert errors.size() == 1
+        }
+    }
+    // TODO relation samples
+
+    @Test
     void good_datamodel() {
 
         new Datamodel("TV Series").with {

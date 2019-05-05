@@ -51,6 +51,7 @@ class Datamodel {
         // Check the samples
         def jsonSlurper = new JsonSlurper()
         entities.each { String e_name, Entity e ->
+            def keys = []
             e.samples.each { jsonSample ->
                 Map sample_map
                 // check sample json format
@@ -82,6 +83,21 @@ class Datamodel {
                             messages << "Invalid sample '$jsonSample' : mandatory property '$p_name' has no sample value"
                             valid = false
                         }
+                    }
+                }
+                // check that key values are unique
+                def key = [:]
+                sample_map.each { p_name, p_value ->
+                    if (e.properties.get(p_name)?.is_key) {
+                        key[p_name] = p_value
+                    }
+                }
+                if (!key.isEmpty()) {
+                    if (keys.any { it == key }) {
+                        messages << "Invalid sample '$jsonSample' : duplicate key $key"
+                        valid = false
+                    } else {
+                        keys << key
                     }
                 }
             }
