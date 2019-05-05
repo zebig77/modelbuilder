@@ -82,6 +82,41 @@ class DatamodelTest {
             assert errors.size() == 1
         }
     }
+
+    @Test
+    void bad_sample_date_format() {
+        new Datamodel("bad_sample_date_format").with {
+            e("E1").with {
+                p("A")
+                p("D").as_date("dd/MM/yyyy")
+                s 1, "10/06/2000" // ok
+                s 2, "10/06+2000"  // ko
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.any { it.contains("expected format") }
+            assert errors.size() == 1
+        }
+    }
+
+    @Test
+    void bad_sample_number_format() {
+        new Datamodel("bad_sample_date_format").with {
+            e("E1").with {
+                p("N").as_number()
+                s 1  // ok
+                s 1.2 // ok
+                s(1.22f) // ok
+                s(-10) // ok
+                s "XX" // ko
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.any { it.contains("'XX' is not a number") }
+            assert errors.size() == 1
+        }
+    }
+
     // TODO relation samples
 
     @Test

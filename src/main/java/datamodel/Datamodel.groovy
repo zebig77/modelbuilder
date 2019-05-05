@@ -3,6 +3,8 @@ package datamodel
 import groovy.json.JsonSlurper
 import org.apache.log4j.Logger
 
+import java.text.SimpleDateFormat
+
 class Datamodel {
 
     final String model_name
@@ -84,7 +86,29 @@ class Datamodel {
                         keys << key
                     }
                 }
-                // TODO check value type
+                // check non-string types
+                for(int i = 0; i < e.p_names.size(); i++) {
+                    String p_name = e.p_names[i]
+                    Property p = e.properties[p_name]
+                    def sample_value = sample[i]
+                    if (p.type == "date" && sample_value != null) {
+                        try {
+                            def d = new SimpleDateFormat(p.format).parse(sample_value)
+                        }
+                        catch (Exception err) {
+                            messages << "Invalid sample '$sample' : expected format '$p.format' for '$p_name' "
+                            valid = false
+                        }
+                    }
+                    if (p.type == "number" && sample_value != null) {
+                        if (!(sample_value instanceof Number)) {
+                            messages << "Invalid sample '$sample' : '$sample_value' is not a number"
+                            valid = false
+                        }
+                    }
+                }
+
+                // TODO check number type
             }
         }
 
