@@ -4,8 +4,7 @@ class Entity {
 
     final String name
 
-    def p_names = [] // record property definition order
-    Map<String,Property> properties = [:]
+    List<Property> properties = []
     def samples = []
 
     Entity(String name) {
@@ -14,11 +13,14 @@ class Entity {
 
     // property creation
     Property p(String property_name) {
-        if (!properties.containsKey(property_name)) {
-            p_names << property_name
-            properties[property_name] = new Property(property_name)
+        if (!properties.any {it.name == property_name}) {
+            properties << new Property(property_name)
         }
-        return properties[property_name]
+        return properties.find {it.name == property_name}
+    }
+
+    List<Property> getKeys() {
+        return properties.findAll {it.is_key}
     }
 
     // sample creation based on named columns

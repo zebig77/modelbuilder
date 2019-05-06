@@ -5,8 +5,7 @@ class EntityTest extends GroovyTestCase {
    void testNew() {
       new Entity("test").with {
          assert name == "test"
-         assert p_names == []
-         assert properties == [:]
+         assert properties == []
       }
    }
 
@@ -14,10 +13,9 @@ class EntityTest extends GroovyTestCase {
       new Entity("test").with {
          p("Nom")
          p("Prénom")
-         assert p_names.size() == 2
          assert properties.size() == 2
-         assert p_names.contains("Nom")
-         assert p_names.contains("Prénom")
+          assert properties.any { it.name == "Nom" }
+          assert properties.any { it.name == "Prénom" }
       }
    }
 
@@ -85,9 +83,12 @@ class EntityTest extends GroovyTestCase {
 
    void testKey() {
       new Entity("test").with {
-         p("Rang").as_key()
-         assert p("Rang").is_key
-         assert !p("Rang").is_unique
+          p("Rang").as_key()
+          assert p("Rang").is_key
+          assert !p("Rang").is_unique
+          p("K2").as_key()
+          p("X") // non-key
+          assert keys == [p("Rang"), p("K2")]
       }
    }
 

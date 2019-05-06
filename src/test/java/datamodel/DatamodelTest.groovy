@@ -117,7 +117,43 @@ class DatamodelTest {
         }
     }
 
-    // TODO relation samples
+    @Test
+    void relation_keys_and_samples() {
+        new Datamodel("relation_keys_and_samples").with {
+            e("E1").with {
+                p("K1").as_key()
+                p("NK1")
+            }
+            e("E2").with {
+                p("K2").as_key()
+                p("K3").as_key()
+                p("NK2")
+            }
+            r("E1","E2").one_to_many()
+            e("E3").with {
+                p("K4").as_key()
+                p("NK3")
+            }
+            r("E1","E3").parent_child()
+            // good samples
+            r("E1","E2").with {
+                s "k1A", "k2A", "k3A", "nk1A"
+                s "k1B", "k2B", "k3B", "nk1B"
+            }
+            assert validate()
+            // bad sample
+            r("E1","E2").with {
+                s "k1A", "k2A" // missing key K3 and non-key NK2
+                s "k1B", "k2B", "k3B" // missing non-key NK2
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.size() == 2
+            errors.each {
+                assert it.contains("expected 4 values")
+            }
+        }
+    }
 
     @Test
     void good_datamodel() {

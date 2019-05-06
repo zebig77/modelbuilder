@@ -11,14 +11,14 @@ class Datamodel {
     static final Logger logger = Logger.getLogger(Datamodel.class)
 
 
-    Map<String, Entity> entities = [:] // entity maps
-    Map<String, Relation> relations = [:] // relation maps
+    Map<String, Entity> entities = [:]
+    Map<String, Relation> relations = [:]
 
     Datamodel(String model_name) {
         this.model_name = model_name
     }
 
-    // entity creation
+    // entity creation or get
     Entity e(String entity_name) {
         if (!entities.containsKey(entity_name)) {
             entities[entity_name] = new Entity(entity_name)
@@ -26,6 +26,7 @@ class Datamodel {
         return entities[entity_name]
     }
 
+    // relation creation or get
     Relation r(String source_entity_name, String target_entity_name) {
         String relation_name = "$source_entity_name -> $target_entity_name"
         if (!relations.containsKey(relation_name)) {
@@ -50,20 +51,19 @@ class Datamodel {
             }
         }
 
-        // Check the samples
+        // Check entity samples
         entities.each { String e_name, Entity e ->
             def keys = []
             e.samples.each { sample ->
                 // check that sample size = properties
-                if (sample.size() != e.p_names.size()) {
-                    messages << "Invalid sample '$sample' : expecting a sample with ${e.p_names.size()} values"
+                if (sample.size() != e.properties.size()) {
+                    messages << "Invalid sample '$sample' : expecting a sample with ${e.properties.size()} values"
                     valid = false
                     return // next sample no need to check the rest
                 }
                 // check that mandatory properties have a sample value
-                for(int i = 0; i < e.p_names.size(); i++) {
-                    String p_name = e.p_names[i]
-                    Property p = e.properties[p_name]
+                for(int i = 0; i < e.properties.size(); i++) {
+                    Property p = e.properties[i]
                     if (!p.is_nullable && sample[i] == null) {
                         messages << "Invalid sample '$sample' : mandatory property '$p_name' has no sample value"
                         valid = false
@@ -71,11 +71,9 @@ class Datamodel {
                 }
                 // check that key values are unique
                 def key = [:]
-                for(int i = 0; i < e.p_names.size(); i++) {
-                    String p_name = e.p_names[i]
-                    def p_value = sample[i]
-                    if (e.properties.get(p_name).is_key) {
-                        key[p_name] = p_value
+                for(int i = 0; i < e.properties.size(); i++) {
+                    if (e.properties[i].is_key) {
+                        key[e.properties[i].name] = sample[i]
                     }
                 }
                 if (!key.isEmpty()) {
@@ -87,16 +85,15 @@ class Datamodel {
                     }
                 }
                 // check non-string types
-                for(int i = 0; i < e.p_names.size(); i++) {
-                    String p_name = e.p_names[i]
-                    Property p = e.properties[p_name]
+                for(int i = 0; i < e.properties.size(); i++) {
+                    Property p = e.properties[i]
                     def sample_value = sample[i]
                     if (p.type == "date" && sample_value != null) {
                         try {
-                            def d = new SimpleDateFormat(p.format).parse(sample_value)
+                            new SimpleDateFormat(p.format).parse(sample_value.toString())
                         }
                         catch (Exception err) {
-                            messages << "Invalid sample '$sample' : expected format '$p.format' for '$p_name' "
+                            messages << "Invalid sample '$sample' : expected format '${p.format}' for '${p.name}'"
                             valid = false
                         }
                     }
@@ -107,15 +104,22 @@ class Datamodel {
                         }
                     }
                 }
-
-                // TODO check number type
             }
         }
 
-        // TODO check relation samples
-        relations.each { r_name, r ->
-
-
+        // Check relation samples
+        relations.each { String r_name, Relation r ->
+            def expected_properties = e(r.source_name).keys + e(r.target_name).properties
+            r.samples.each { sample ->
+                if (sample.size() != expected_properties.size()) {
+                    messages << "Invalid sample '$sample': expected ${expected_properties.size()} values"
+                    valid = false
+                    return // next sample
+                }
+                sample.each { sample_value ->
+                    // TODO check relation sample types
+                }
+            }
         }
 
         if (!valid) {

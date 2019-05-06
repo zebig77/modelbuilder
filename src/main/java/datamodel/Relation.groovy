@@ -45,8 +45,6 @@ class Relation {
         samples << sample
     }
 
-    // TODO manage relations with non-key properties ? maybe
-
     String toString() {
         return "$source_name -> $target_name"
     }
