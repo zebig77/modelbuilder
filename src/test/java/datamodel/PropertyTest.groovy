@@ -1,5 +1,6 @@
 package datamodel
 
+import static org.junit.jupiter.api.Assertions.assertThrows
 import org.junit.jupiter.api.Test
 
 class PropertyTest {
@@ -32,7 +33,7 @@ class PropertyTest {
     void invalid_type() {
         new Datamodel("new_property").with {
             e("E").with {
-                p("p").type = "no good"
+                assertThrows(Exception.class, { p("p").type = "no good" })
             }
         }
     }
