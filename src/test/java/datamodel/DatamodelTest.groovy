@@ -1,8 +1,6 @@
 package datamodel
 
-import org.apache.log4j.BasicConfigurator
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DatamodelTest {
 

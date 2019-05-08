@@ -1,11 +1,11 @@
 package datamodel
 
-import junit.framework.TestCase
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-class RelationTest extends GroovyTestCase {
+class RelationTest {
 
-   void test_new_relation() {
+   @Test
+   void new_relation() {
       new Datamodel("").with {
          r("s","t").with {
             assert source_name == "s"

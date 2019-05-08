@@ -17,8 +17,25 @@ class Property {
         this.name = name
     }
 
+    void setType(String t) {
+        if (!["string","number","integer","boolean","date"].contains(t)) {
+            throw new Exception("Invalid type '$t'")
+        }
+    }
+
+    // any kind of numeric value
     Property as_number() {
         this.type = "number"
+        return this
+    }
+
+    Property as_integer() {
+        this.type = "integer"
+        return this
+    }
+
+    Property as_boolean() {
+        this.type = "boolean"
         return this
     }
 

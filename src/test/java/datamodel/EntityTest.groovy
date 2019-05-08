@@ -1,15 +1,21 @@
 package datamodel
 
-class EntityTest extends GroovyTestCase {
+import static org.junit.jupiter.api.Assertions.assertNull
+import static org.junit.jupiter.api.Assertions.fail
+import org.junit.jupiter.api.Test
 
-   void testNew() {
+class EntityTest {
+
+   @Test
+   void new_entity() {
       new Entity("test").with {
          assert name == "test"
          assert properties == []
       }
    }
 
-   void testAddProperty() {
+   @Test
+   void add_property() {
       new Entity("test").with {
          p("Nom")
          p("Prénom")
@@ -19,7 +25,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testSetType() {
+   @Test
+   void set_type() {
       new Entity("test").with {
          p "Age"
          assert p("Age").type == "string"
@@ -31,6 +38,7 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
+   @Test
    void test_date() {
       new Entity("test").with {
          p("date1").with {
@@ -54,7 +62,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testUnique() {
+   @Test
+   void test_unique() {
       new Entity("test").with {
          p("Rang")
          assert !p("Rang").is_unique
@@ -63,7 +72,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testNullable() {
+   @Test
+   void test_nullable() {
       new Entity("test").with {
          p("A")
          assert !p("A").is_nullable
@@ -72,7 +82,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testSequence() {
+   @Test
+   void test_sequence() {
       new Entity("test").with {
          p("Rang").as_sequence()
          assert p("Rang").is_sequence
@@ -81,7 +92,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testKey() {
+   @Test
+   void test_key() {
       new Entity("test").with {
           p("Rang").as_key()
           assert p("Rang").is_key
@@ -92,7 +104,8 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
-   void testReference() {
+   @Test
+   void test_reference() {
       new Entity("test").with {
          assertNull(p("dummy").instance_of)
          p("FK").instance_of("Foreign Key")
@@ -100,6 +113,7 @@ class EntityTest extends GroovyTestCase {
       }
    }
 
+   @Test
    void test_good_sample() {
       new Entity("test").with {
          p("A")
