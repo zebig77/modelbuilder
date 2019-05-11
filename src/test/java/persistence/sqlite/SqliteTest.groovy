@@ -25,7 +25,7 @@ class SqliteTest {
 
     @Test
     void test_create_db_and_table() {
-        String db_file = "${System.getProperty("java.io.tmpdir")}test_create_db_and_table.db"
+        String db_file = System.getProperty("java.io.tmpdir")+File.separator+"test_create_db_and_table.db"
         new File(db_file).delete()
         String url = "jdbc:sqlite:$db_file"
         DriverManager.getConnection(url).with {
