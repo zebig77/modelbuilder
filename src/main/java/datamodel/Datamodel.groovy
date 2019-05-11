@@ -30,15 +30,18 @@ class Datamodel {
     Relation r(String source_entity_name, String target_entity_name) {
         String relation_name = "$source_entity_name -> $target_entity_name"
         if (!relations.containsKey(relation_name)) {
-            relations[relation_name] = new Relation(source_entity_name,target_entity_name)
+            relations[relation_name] = new Relation(source_entity_name, target_entity_name)
         }
         return relations[relation_name]
     }
 
-    boolean validate(messages = []) {
+    boolean validate_entities(messages) {
+        // TODO validate_entities and properties
+        return true
+    }
 
-        boolean valid = true
-
+    boolean validate_relations(messages) {
+        def valid = true
         // check that relations refer to existing entities
         relations.each { String relation_name, Relation r ->
             if (!entities.containsKey(r.source_name)) {
@@ -50,7 +53,12 @@ class Datamodel {
                 valid = false
             }
         }
+        return valid
 
+    }
+
+    boolean validate_samples(messages) {
+        def valid = true
         // Check entity samples
         entities.each { String e_name, Entity e ->
             def keys = []
@@ -62,7 +70,7 @@ class Datamodel {
                     return // next sample no need to check the rest
                 }
                 // check that mandatory properties have a sample value
-                for(int i = 0; i < e.properties.size(); i++) {
+                for (int i = 0; i < e.properties.size(); i++) {
                     Property p = e.properties[i]
                     if (!p.is_nullable && sample[i] == null) {
                         messages << "Invalid sample '$sample' : mandatory property '$p_name' has no sample value"
@@ -71,7 +79,7 @@ class Datamodel {
                 }
                 // check that key values are unique
                 def key = [:]
-                for(int i = 0; i < e.properties.size(); i++) {
+                for (int i = 0; i < e.properties.size(); i++) {
                     if (e.properties[i].is_key) {
                         key[e.properties[i].name] = sample[i]
                     }
@@ -85,7 +93,7 @@ class Datamodel {
                     }
                 }
                 // check non-string types
-                for(int i = 0; i < e.properties.size(); i++) {
+                for (int i = 0; i < e.properties.size(); i++) {
                     Property p = e.properties[i]
                     def sample_value = sample[i]
                     if (p.type == "date" && sample_value != null) {
@@ -121,10 +129,18 @@ class Datamodel {
                 }
             }
         }
+        return valid
+    }
+
+
+    boolean validate(messages = []) {
+
+        def valid = validate_entities(messages) & validate_relations(messages) & validate_samples(messages)
 
         if (!valid) {
             messages.each { logger.error(it) }
         }
+
         return valid
     }
 }
