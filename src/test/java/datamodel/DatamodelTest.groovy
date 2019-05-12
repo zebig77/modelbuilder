@@ -1,5 +1,6 @@
 package datamodel
 
+import datamodel.samples.TVSeriesDatamodel
 import org.junit.jupiter.api.Test
 
 class DatamodelTest {
@@ -155,105 +156,9 @@ class DatamodelTest {
 
     @Test
     void good_datamodel() {
-
-        new Datamodel("TV Series").with {
-
-            // Entities
-            e("TV Series").with {
-                p("Name").as_key()
-                p("Genre").instance_of("TV Genre") // foreign key
-            }
-            e("Author").with {
-                p("Name").as_key() // composite key
-                p("Birth date").as_date('DD/MM/YYYY').nullable()
-            }
-            e("Actor").with {
-                p("Name").as_key()
-                p("Birth date").as_date('DD/MM/YYYY').nullable()
-            }
-            e("Season").with {
-                p("Season number").as_number().as_key()
-                p("Release date").as_date()
-                p("Number of episodes").as_number()
-            }
-            e("TV Genre").with {
-                p("Name").as_key()
-                p("Description").nullable()
-            }
-
-            // Relations
-            r("TV Series", "Author").one_to_many()
-            r("TV Series", "Season").parent_child()
-            r("Season", "Actor").one_to_many()
-            r("Actor", "Season").zero_to_many()
-
-            // Samples
-            e("TV Series").with {
-                s "Game of Throne",     "Fantasy"
-                s "Breaking Bad",       "Crime"
-                s "Better Call Saul",   "Crime"
-            }
-
-            e("Author").with {
-                s "David Benioff",      "25/09/1970"
-                s "Daniel Brett Weiss", "23/04/1971"
-                s "Vince Gilligan",     "10/02/1967"
-                s "Peter Gould",        null
-            }
-
-            e("Actor").with {
-                s "Bob Odenkirk",       "22/10/1962"
-                s "Jonathan Banks",     "31/01/1947"
-                s "Rhea Seehorn",       "12/05/1972"
-                s "Bryan Cranston",     "07/03/1956"
-                s "Anna Gunn",          "11/08/1968"
-                s "Kit Harington",      "26/12/1986"
-                s "Peter Dinklage",     "11/06/1969"
-                s "Emilia Clarke",      "23/10/1986"
-            }
-
-            r("TV Series", "Season").with {
-                s "Game of Throne",     1, "17/04/2011", 10
-                s "Game of Throne",     2, "01/04/2012", 10
-                s "Game of Throne",     3, "31/03/2013", 10
-                s "Game of Throne",     4, "06/04/2014", 10
-                s "Game of Throne",     5, "12/04/2015", 10
-                s "Game of Throne",     6, "24/04/2016", 10
-                s "Game of Throne",     7, "16/07/2017", 7
-                s "Game of Throne",     8, "14/04/2019", 6
-
-                s "Breaking Bad",       1, "20/01/2008", 7
-                s "Breaking Bad",       2, "08/03/2009", 13
-                s "Breaking Bad",       3, "21/03/2010", 13
-                s "Breaking Bad",       4, "17/07/2011", 13
-                s "Breaking Bad",       5, "15/07/2012", 16
-
-                s "Better Call Saul",   1, "08/02/2015", 10
-                s "Better Call Saul",   2, "15/02/2016", 10
-                s "Better Call Saul",   3, "10/04/2017", 10
-                s "Better Call Saul",   4, "06/08/2018", 10
-            }
-
-            r("Season", "Actor").with {
-                (1..8).each { season ->
-                    s "Game of Throne", season, "Kit Harington"
-                    s "Game of Throne", season, "Peter Dinklage"
-                    s "Game of Throne", season, "Emilia Clarke"
-                }
-                (1..5).each { season ->
-                    s "Breaking Bad", season, "Bryan Cranston"
-                    s "Breaking Bad", season, "Anna Gunn"
-                    s "Breaking Bad", season, "Bob Odenkirk"
-                }
-                (1..4).each { season ->
-                    s "Better Call Saul", season, "Bob Odenkirk"
-                    s "Better Call Saul", season, "Rhea Seehorn"
-                }
-            }
-
+        new TVSeriesDatamodel().with {
             assert validate()
         }
-
     }
 
 }

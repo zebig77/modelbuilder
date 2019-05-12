@@ -1,6 +1,7 @@
 package datamodel
 
-import groovy.json.JsonSlurper
+import datamodel.relational.RelationalModel
+import datamodel.relational.Table
 import org.apache.log4j.Logger
 
 import java.text.SimpleDateFormat
@@ -12,7 +13,6 @@ class Datamodel {
 
 
     Map<String, Entity> entities = [:]
-    Map<String, Relation> relations = [:]
 
     Datamodel(String model_name) {
         this.model_name = model_name
@@ -24,15 +24,6 @@ class Datamodel {
             entities[entity_name] = new Entity(entity_name)
         }
         return entities[entity_name]
-    }
-
-    // relation creation or get
-    Relation r(String source_entity_name, String target_entity_name) {
-        String relation_name = "$source_entity_name -> $target_entity_name"
-        if (!relations.containsKey(relation_name)) {
-            relations[relation_name] = new Relation(source_entity_name, target_entity_name)
-        }
-        return relations[relation_name]
     }
 
     boolean validate_entities(messages) {
@@ -113,34 +104,31 @@ class Datamodel {
                     }
                 }
             }
+            // TODO validate relation samples
         }
 
-        // Check relation samples
-        relations.each { String r_name, Relation r ->
-            def expected_properties = e(r.source_name).keys + e(r.target_name).properties
-            r.samples.each { sample ->
-                if (sample.size() != expected_properties.size()) {
-                    messages << "Invalid sample '$sample': expected ${expected_properties.size()} values"
-                    valid = false
-                    return // next sample
-                }
-                sample.each { sample_value ->
-                    // TODO check relation sample types
-                }
-            }
-        }
         return valid
     }
 
 
     boolean validate(messages = []) {
-
         def valid = validate_entities(messages) & validate_relations(messages) & validate_samples(messages)
-
         if (!valid) {
             messages.each { logger.error(it) }
         }
-
         return valid
+    }
+
+    RelationalModel relational() {
+        def dm = new RelationalModel()
+        entities.values().each { Entity e ->
+            dm.tables[Table.normalize(e.name)] = new Table(e)
+            e.relations.each {
+                if (it.target_max == Relation.N) {
+                    dm.tables[Table.normalize(it.relation_name)] = new Table(it)
+                }
+            }
+        }
+        return dm
     }
 }

@@ -1,9 +1,12 @@
 package datamodel
 
+import datamodel.relational.Table
+
 class Relation {
 
     final String source_name // source entity name
     final String target_name // target entity name
+    final String relation_name
     int source_min
     int source_max
     int target_min
@@ -12,9 +15,15 @@ class Relation {
     boolean parent_child = false
     def samples = []
 
-    Relation(String source_name, String target_name) {
+    Relation(String source_name, String target_name, String relation_name) {
         this.source_name = source_name
         this.target_name = target_name
+        if (relation_name == "") {
+            this.relation_name = Table.normalize("$source_name to $target_name")
+        }
+        else {
+            this.relation_name = Table.normalize(relation_name)
+        }
         source_min = 1
         source_max = 1
     }
@@ -46,6 +55,6 @@ class Relation {
     }
 
     String toString() {
-        return "$source_name -> $target_name"
+        return relation_name
     }
 }

@@ -14,7 +14,7 @@ class PropertyTest {
             }
             e("E1").with {
                 p("unique_key").as_key()
-                p("foreign_key").instance_of("FK")
+                p("foreign_key").references("FK")
                 p("plain_string")
                 p("number").as_number()
                 p("integer").as_integer()

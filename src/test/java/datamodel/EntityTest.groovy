@@ -108,7 +108,7 @@ class EntityTest {
    void test_reference() {
       new Entity("test").with {
          assertNull(p("dummy").instance_of)
-         p("FK").instance_of("Foreign Key")
+         p("FK").references("Foreign Key")
          assert p("FK").instance_of == "Foreign Key"
       }
    }

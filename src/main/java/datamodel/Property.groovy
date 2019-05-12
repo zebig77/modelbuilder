@@ -12,6 +12,8 @@ class Property {
     boolean is_sequence = false
     boolean is_nullable = false
     String format
+    // in a parent-child relation, this child property derives from a parent key
+    boolean is_parent_key = false
 
     Property(String name) {
         this.name = name
@@ -46,7 +48,7 @@ class Property {
         return this
     }
 
-    Property instance_of(entity_name) {
+    Property references(entity_name) {
         this.instance_of = entity_name
         return this
     }
@@ -63,6 +65,11 @@ class Property {
 
     Property as_key() {
         this.is_key = true
+        return this
+    }
+
+    Property as_parent_key() {
+        this.is_parent_key = true
         return this
     }
 
