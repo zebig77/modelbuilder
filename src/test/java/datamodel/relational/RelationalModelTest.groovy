@@ -13,8 +13,8 @@ class RelationalModelTest {
             }
             relational().with {
                 assert tables.size() == 1
-                assert tables["T1's table"] != null
-                Table t = tables["T1's table"]
+                assert tables["T1_S_TABLE"] != null
+                Table t = tables["T1_S_TABLE"]
                 assert t.table_name == "T1_S_TABLE"
                 assert t.cols.size() == 1
                 Column c = t.cols[0]
@@ -67,7 +67,9 @@ class RelationalModelTest {
             }
             relational().with {
                 assert tables.size() == 3
-                tables.each { k, t -> println "$k -> ${t.table_name}" }
+                assert tables["AUTHOR_TO_BOOK"] != null
+                def tr = tables["AUTHOR_TO_BOOK"]
+                assert tr.cols.size() == 2 // author key + book key
             }
         }
     }
