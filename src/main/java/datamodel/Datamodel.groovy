@@ -1,5 +1,6 @@
 package datamodel
 
+import datamodel.relational.Column
 import datamodel.relational.RelationalModel
 import datamodel.relational.Table
 import org.apache.log4j.Logger
@@ -122,13 +123,29 @@ class Datamodel {
     RelationalModel relational() {
         def dm = new RelationalModel()
         entities.values().each { Entity e ->
+            // create 1 table for each entity E
             dm.tables[Table.normalize(e.name)] = new Table(e)
-            e.relations.each {
-                if (it.target_max == Relation.N) {
-                    dm.tables[Table.normalize(it.relation_name)] = new Table(it)
+            // create 1 table each time E has a "...to many" relation
+            e.relations.find { it.target_max == Relation.N }.each {
+                def tr = new Table(it)
+                dm.tables[Table.normalize(it.relation_name)] = tr
+                def parent_keys = []
+                getParentKeys(e.name, parent_keys)
+                parent_keys + e.properties.each {
+                    tr.cols << new Column(it)
                 }
             }
         }
         return dm
     }
+
+    void getParentKeys(String parent_entity_name, List<Property> parent_keys = []) {
+        Entity e = entities[parent_entity_name]
+        if (e.parent_entity_name != null) {
+            getParentKeys(e.parent_entity_name, parent_keys)
+        }
+        parent_keys << e.getKeys()
+    }
+
+
 }
