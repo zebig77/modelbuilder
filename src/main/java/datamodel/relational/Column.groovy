@@ -15,10 +15,11 @@ class Column {
     boolean is_nullable = false
     String format
 
-    Column(Property p) {
-        this.name = Table.normalize(p.name)
+    Column(String prefix="", Property p) {
+        this.name = Table.normalize(prefix+p.name)
         this.type = p.type
         this.is_key = p.is_key
         this.is_parent_key = p.is_parent_key
     }
+
 }

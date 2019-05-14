@@ -4,6 +4,7 @@ import java.text.SimpleDateFormat
 
 class Property {
 
+    final String entity_name
     final String name
     String type = "string" // default
     String instance_of
@@ -15,7 +16,8 @@ class Property {
     // in a parent-child relation, this child property derives from a parent key
     boolean is_parent_key = false
 
-    Property(String name) {
+    Property(String entity_name, String name) {
+        this.entity_name = entity_name
         this.name = name
     }
 
@@ -78,6 +80,10 @@ class Property {
         this.type = "number"
         this.is_unique = true
         return this
+    }
+
+    String toString() {
+        return "$entity_name.$name"
     }
 
 }

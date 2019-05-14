@@ -16,7 +16,7 @@ class Entity {
     // property creation
     Property p(String property_name) {
         if (!properties.any {it.name == property_name}) {
-            properties << new Property(property_name)
+            properties << new Property(this.name, property_name)
         }
         return properties.find {it.name == property_name}
     }

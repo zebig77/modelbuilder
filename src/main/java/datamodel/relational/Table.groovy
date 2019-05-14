@@ -9,8 +9,11 @@ class Table {
     final String table_name
     List<Column> cols = []
 
-    Table(Entity e) {
+    Table(List<Property> parent_keys = [], Entity e) {
         table_name = normalize(e.name)
+        parent_keys.each { Property p ->
+            cols << new Column(Table.normalize(p.entity_name)+"_",p)
+        }
         e.properties.each {Property p ->
             cols << new Column(p)
         }
@@ -23,5 +26,9 @@ class Table {
 
     static String normalize(String s) {
         return s.replaceAll("[^A-Za-z0-9]", "_").toUpperCase()
+    }
+
+    String toString() {
+        return table_name
     }
 }

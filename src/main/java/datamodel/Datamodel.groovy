@@ -124,15 +124,24 @@ class Datamodel {
         def dm = new RelationalModel()
         entities.values().each { Entity e ->
             // create 1 table for each entity E
-            dm.tables[Table.normalize(e.name)] = new Table(e)
+            def table_name = Table.normalize(e.name)
+            if (e.parent_entity_name != null) {
+                // child table, get parent keys
+                def parent_keys = []
+                getParentKeys(e.parent_entity_name, parent_keys)
+                dm.tables[table_name] = new Table(parent_keys, e)
+            }
+            else {
+                dm.tables[table_name] = new Table(e)
+            }
             // create 1 table each time E has a "...to many" relation
-            e.relations.find { it.target_max == Relation.N }.each {
-                def tr = new Table(it)
-                dm.tables[Table.normalize(it.relation_name)] = tr
+            e.relations.find { it.target_max == Relation.N }.each { Relation r ->
+                def tr = new Table(r)
+                dm.tables[Table.normalize(r.relation_name)] = tr
                 def parent_keys = []
                 getParentKeys(e.name, parent_keys)
-                parent_keys + e.properties.each {
-                    tr.cols << new Column(it)
+                (parent_keys + entities[r.target_name].properties).each { Property p ->
+                    tr.cols << new Column(Table.normalize(p.entity_name)+"_",p)
                 }
             }
         }
