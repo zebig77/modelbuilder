@@ -22,4 +22,8 @@ class Column {
         this.is_parent_key = p.is_parent_key
     }
 
+    String toString() {
+        return name
+    }
+
 }

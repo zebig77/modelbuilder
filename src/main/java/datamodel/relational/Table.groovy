@@ -12,10 +12,14 @@ class Table {
     Table(List<Property> parent_keys = [], Entity e) {
         table_name = normalize(e.name)
         parent_keys.each { Property p ->
-            cols << new Column(Table.normalize(p.entity_name)+"_",p)
+            def c = new Column(Table.normalize(p.entity_name)+"_",p)
+            c.is_parent_key = true
+            cols << c
         }
         e.properties.each {Property p ->
-            cols << new Column(p)
+            if (!p.is_parent_key) { // parent keys have already been added
+                cols << new Column(p)
+            }
         }
     }
 

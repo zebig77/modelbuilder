@@ -13,7 +13,7 @@ class Relation {
     int target_max
     final static int N =  Integer.MAX_VALUE
     boolean parent_child = false
-    def samples = []
+    List<List<Object>> samples = []
 
     Relation(String source_name, String target_name, String relation_name) {
         this.source_name = source_name

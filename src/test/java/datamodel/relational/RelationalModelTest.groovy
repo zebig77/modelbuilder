@@ -2,6 +2,7 @@ package datamodel.relational
 
 import datamodel.Datamodel
 import org.junit.jupiter.api.Test
+import persistence.sqlite.SQLiteDB
 
 class RelationalModelTest {
 
@@ -27,20 +28,20 @@ class RelationalModelTest {
     @Test
     void parent_child() {
         new Datamodel("M2").with {
-            e("T1").with {
-                p("T1K").as_key()
-                p("T1C").as_number()
+            e("PARENT").with {
+                p("PKEY").as_key()
+                p("PCOL").as_number()
             }
-            e("T2").with {
-                p("T1K").as_parent_key()
-                p("T2K").as_key()
-                p("T2C")
-                has_parent("T1")
+            e("CHILD").with {
+                p("PKEY").as_parent_key()
+                p("CKEY").as_key()
+                p("CCOL")
+                has_parent("PARENT")
             }
             relational().with {
                 assert tables.size() == 2
-                def t1 = tables["T1"]
-                def t2 = tables["T2"]
+                def t1 = tables["PARENT"]
+                def t2 = tables["CHILD"]
                 assert t1.cols.size() == 2
                 assert t2.cols.size() == 3
                 Column t1k = t1.cols[0]
@@ -95,6 +96,25 @@ class RelationalModelTest {
                 assert tb.cols[0].name == "AUTHOR_NAME"
                 assert tb.cols[1].name == "TITLE"
             }
+        }
+    }
+
+    @Test
+    void relational_to_sqlite() {
+        new Datamodel("M5").with {
+            e("Author").with {
+                p("Name").as_key()
+            }
+            e("Book").with {
+                p("Title").as_key()
+                has_parent("Author")
+            }
+            def rm = relational()
+            def db_file_name = "/tmp/relational_to_sqlite.db"
+            def db = new SQLiteDB(db_file_name)
+            db.create_schema(rm)
+            // TODO injecter des données et relire
+            // TODO vérifier la contrrainte d'intégrité père fils
         }
     }
 

@@ -6,14 +6,27 @@ import org.junit.jupiter.api.Test
 class DatamodelTest {
 
     @Test
-    void bad_relation() {
-        new Datamodel("bad_relation").with {
-            r("E1", "E2")
+    void missing_properties() {
+        new Datamodel("missing_props").with {
+            e("E1")
             def errors = []
             assert !validate(errors)
-            assert errors.size() == 2
-            assert errors.any { it.contains("Relation E1 -> E2 refers to non-existent source entity 'E1'") }
-            assert errors.any { it.contains("Relation E1 -> E2 refers to non-existent target entity 'E2'") }
+            assert errors.size() == 1
+            assert errors.any { it.contains("Invalid entity 'E1' : no property defined") }
+        }
+    }
+
+    @Test
+    void bad_relation_missing_target() {
+        new Datamodel("bad_relation").with {
+            e("E1").with {
+                p("Key").as_key()
+                has_one_to_many("E2")
+            }
+            def errors = []
+            assert !validate(errors)
+            assert errors.size() == 1
+            assert errors.any { it.contains("relation 'E1_TO_E2' targets a non-existant entity 'E2'") }
         }
     }
 
@@ -77,7 +90,7 @@ class DatamodelTest {
             }
             def errors = []
             assert !validate(errors)
-            assert errors.any { it.contains("duplicate key [A:1, B:2]") }
+            assert errors.any { it.contains("duplicate key '[A:1, B:2]'") }
             assert errors.size() == 1
         }
     }
@@ -119,37 +132,39 @@ class DatamodelTest {
     @Test
     void relation_keys_and_samples() {
         new Datamodel("relation_keys_and_samples").with {
+
             e("E1").with {
                 p("K1").as_key()
                 p("NK1")
+                has_one_to_many("E2").with {
+                    // good sample
+                    s "k1A", "k2A", "k3A"
+                    s "k1B", "k2B", "k3B"
+                }
             }
             e("E2").with {
                 p("K2").as_key()
                 p("K3").as_key()
                 p("NK2")
             }
-            r("E1","E2").one_to_many()
             e("E3").with {
                 p("K4").as_key()
                 p("NK3")
-            }
-            r("E1","E3").parent_child()
-            // good samples
-            r("E1","E2").with {
-                s "k1A", "k2A", "k3A", "nk1A"
-                s "k1B", "k2B", "k3B", "nk1B"
+                has_parent("E1")
             }
             assert validate()
+
             // bad sample
-            r("E1","E2").with {
-                s "k1A", "k2A" // missing key K3 and non-key NK2
-                s "k1B", "k2B", "k3B" // missing non-key NK2
+            e("E1").relations[0].with { // to E2
+                s "k1A", "k2A" // missing key K3
+                s "k1B", "k2B", "k3B", "Boom" // one value in excess
             }
+
             def errors = []
             assert !validate(errors)
             assert errors.size() == 2
-            errors.each {
-                assert it.contains("expected 4 values")
+            errors.each { String error_msg ->
+                assert error_msg.contains("expecting a sample with 3 values")
             }
         }
     }

@@ -52,4 +52,8 @@ class Entity {
         return r
     }
 
+    String toString() {
+        return name
+    }
+
 }
