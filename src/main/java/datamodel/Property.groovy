@@ -71,6 +71,7 @@ class Property {
     }
 
     Property as_parent_key() {
+        this.is_key = true
         this.is_parent_key = true
         return this
     }

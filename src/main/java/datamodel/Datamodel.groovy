@@ -51,7 +51,8 @@ class Datamodel {
         def dm = this
         // Check entity samples
         entities.each { String e_name, Entity e ->
-            def keys = []
+            def key_values = [] // all current key values for the sample
+            // TODO manage several keysets
             e.samples.each { sample ->
                 // check that sample size = properties
                 if (sample.size() != e.properties.size()) {
@@ -68,18 +69,18 @@ class Datamodel {
                     }
                 }
                 // check that key values are unique
-                def key = [:]
+                def key_value = [:]
                 for (int i = 0; i < e.properties.size(); i++) {
                     if (e.properties[i].is_key) {
-                        key[e.properties[i].name] = sample[i]
+                        key_value[e.properties[i].name] = sample[i]
                     }
                 }
-                if (!key.isEmpty()) {
-                    if (keys.any { it == key }) {
-                        messages << "Invalid sample '$sample' for entity '$e' : duplicate key '$key'"
+                if (!key_value.isEmpty()) {
+                    if (key_values.any { it == key_value }) {
+                        messages << "Invalid sample '$sample' for entity '$e' : duplicate key '$key_value'"
                         valid = false
                     } else {
-                        keys << key
+                        key_values << key_value
                     }
                 }
                 // check sample value types

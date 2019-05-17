@@ -1,6 +1,7 @@
 package datamodel.samples
 
 import datamodel.Datamodel
+import datamodel.Relation
 
 class TVSeriesDatamodel extends Datamodel {
 
@@ -81,20 +82,20 @@ class TVSeriesDatamodel extends Datamodel {
             s "Kit Harington",      "26/12/1986"
             s "Peter Dinklage",     "11/06/1969"
             s "Emilia Clarke",      "23/10/1986"
-            has_zero_to_many("Series Season", "Plays in").with {
+            has_zero_to_many("Series Season", "Plays in").with { Relation r ->
                 (1..8).each { season ->
-                    s "Kit Harington", "Game of Throne", season
-                    s "Peter Dinklage", "Game of Throne", season
-                    s "Emilia Clarke", "Game of Throne", season
+                    r.s "Kit Harington", "Game of Throne", season
+                    r.s "Peter Dinklage", "Game of Throne", season
+                    r.s "Emilia Clarke", "Game of Throne", season
                 }
                 (1..5).each { season ->
-                    s "Bryan Cranston", "Breaking Bad", season
-                    s "Anna Gunn", "Breaking Bad", season
-                    s "Bob Odenkirk", "Breaking Bad", season
+                    r.s "Bryan Cranston", "Breaking Bad", season
+                    r.s "Anna Gunn", "Breaking Bad", season
+                    r.s "Bob Odenkirk", "Breaking Bad", season
                 }
                 (1..4).each { season ->
-                    s "Bob Odenkirk", "Better Call Saul", season
-                    s "Rhea Seehorn", "Better Call Saul", season
+                    r.s "Bob Odenkirk", "Better Call Saul", season
+                    r.s "Rhea Seehorn", "Better Call Saul", season
                 }
             }
         }
