@@ -1,6 +1,6 @@
 package datamodel
 
-import datamodel.relational.Column
+
 import datamodel.relational.RelationalModel
 import datamodel.relational.Table
 import org.apache.log4j.Logger
@@ -131,7 +131,8 @@ class Datamodel {
     }
 
     RelationalModel relational() {
-        def dm = new RelationalModel()
+        def dm = this
+        def rm = new RelationalModel()
         entities.values().each { Entity e ->
             // create 1 table for each entity E
             def table_name = Table.normalize(e.name)
@@ -139,22 +140,18 @@ class Datamodel {
                 // child table, get parent keys
                 def parent_keys = []
                 getParentKeys(e.parent_entity_name, parent_keys)
-                dm.tables[table_name] = new Table(parent_keys, e)
+                rm.tables[table_name] = new Table(parent_keys, e)
             } else {
-                dm.tables[table_name] = new Table(e)
+                rm.tables[table_name] = new Table(e)
             }
             // create 1 table each time E has a "...to many" relation
-            e.relations.find { it.target_max == Relation.N }.each { Relation r ->
-                def tr = new Table(r)
-                dm.tables[Table.normalize(r.relation_name)] = tr
-                def parent_keys = []
-                getParentKeys(e.name, parent_keys)
-                (parent_keys + entities[r.target_name].properties).each { Property p ->
-                    tr.cols << new Column(Table.normalize(p.entity_name) + "_", p)
-                }
+            e.relations.find { it.target_max == Relation.N && !it.parent_child }.each { Relation r ->
+                def r_keys = dm.entities[r.source_name].keys + dm.entities[r.target_name].keys
+                def tr = new Table(r_keys, r)
+                rm.tables[tr.table_name] = tr
             }
         }
-        return dm
+        return rm
     }
 
     void getParentKeys(String parent_entity_name, List<Property> parent_keys = []) {

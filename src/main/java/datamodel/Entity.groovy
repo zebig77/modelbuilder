@@ -6,7 +6,7 @@ class Entity {
 
     List<Property> properties = []
     String parent_entity_name
-    def samples = []
+    List<List<Object>> samples = []
     List<Relation> relations = []
 
     Entity(String name) {

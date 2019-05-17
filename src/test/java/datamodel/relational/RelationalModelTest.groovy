@@ -49,8 +49,6 @@ class RelationalModelTest {
                 assert t1c.type == "number"
                 assert t1k.is_key
                 Column t2t1k = t2.cols[0]
-                Column t2k = t2.cols[1]
-                Column t2c = t2.cols[2]
                 assert t2t1k.is_parent_key
             }
         }
@@ -89,7 +87,6 @@ class RelationalModelTest {
             }
             relational().with {
                 assert tables.size() == 2
-                println tables.values()
                 def tb = tables["BOOK"]
                 assert tb != null
                 assert tb.cols.size() == 2 // parent key (author name) + book key (title)

@@ -5,7 +5,7 @@ import datamodel.Property
 class Column {
 
     final String name
-    final String type = "string" // default
+    String type = "string" // default
     String foreign_key_table
     String foreign_key_col
     boolean is_unique = false

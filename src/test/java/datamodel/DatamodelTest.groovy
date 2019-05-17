@@ -160,7 +160,7 @@ class DatamodelTest {
                 s "k1B", "k2B", "k3B", "Boom" // one value in excess
             }
 
-            def errors = []
+            List<String> errors = []
             assert !validate(errors)
             assert errors.size() == 2
             errors.each { String error_msg ->

@@ -34,6 +34,10 @@ class SQLiteDB {
         cnx.createStatement().execute(sb.toString())
     }
 
+    void load_sample(Table t) {
+
+    }
+
     static String column_def(Column c) {
         def nullable = c.is_nullable ? "" : " NOT NULL"
         switch (c.type) {
@@ -41,8 +45,8 @@ class SQLiteDB {
             case "integer": return "$c.name INTEGER $nullable"
             case "number": return "$c.name REAL $nullable"
             case "boolean": return "$c.name INTEGER $nullable"
-            throw new Exception("invalid column data type: $c.type")
         }
+        throw new Exception("invalid column data type: $c.type")
     }
 
 }
