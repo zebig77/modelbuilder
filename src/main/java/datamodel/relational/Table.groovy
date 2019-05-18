@@ -24,7 +24,7 @@ class Table {
     }
 
     Table(List<Property> keys, Relation r) {
-        table_name = normalize(r.relation_name)
+        table_name = normalize(r.name)
         assert r.target_max == Relation.N && !r.parent_child
         keys.each { Property p ->
             cols << new Column(normalize(p.entity_name) + "_", p)

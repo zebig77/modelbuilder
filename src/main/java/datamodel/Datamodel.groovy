@@ -4,6 +4,8 @@ package datamodel
 import datamodel.relational.RelationalModel
 import datamodel.relational.Table
 import org.apache.log4j.Logger
+import utils.DependencyNode
+import utils.DependencySolver
 
 import java.text.SimpleDateFormat
 
@@ -198,5 +200,32 @@ class Datamodel {
         throw new Exception("Unknow data type for $p : $p.type")
     }
 
-
+    List<Entity> getEntitiesByDependencyOrder() {
+        Map<String, DependencyNode> nodes = [:]
+        // nodes = all entities
+        entities.values().each { Entity e ->
+            nodes[e.name] = new DependencyNode(name: e.name)
+        }
+        // dependencies =
+        //  - parent-child : child depends on parent
+        //  - foreign keys
+        nodes.values().each { DependencyNode node ->
+            Entity e = entities[node.name]
+            // parent-child
+            if (e.parent_entity_name) {
+                node.addEdge(nodes[e.parent_entity_name])
+            }
+            // foreign keys
+            e.properties.each { Property p ->
+                if (p.instance_of != null) {
+                    node.addEdge(nodes[p.instance_of])
+                }
+            }
+        }
+        def root = new DependencyNode(name: "__ROOT__")
+        nodes.values().each { root.addEdge(it) }
+        return DependencySolver.dep_resolve(root) - root
+    }
 }
+
+

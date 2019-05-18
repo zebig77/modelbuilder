@@ -110,8 +110,9 @@ class RelationalModelTest {
             def db_file_name = "/tmp/relational_to_sqlite.db"
             def db = new SQLiteDB(db_file_name)
             db.create_schema(rm)
+            db.load_sample()
             // TODO injecter des données et relire
-            // TODO vérifier la contrrainte d'intégrité père fils
+            // TODO vérifier la contrainte d'intégrité père fils
         }
     }
 

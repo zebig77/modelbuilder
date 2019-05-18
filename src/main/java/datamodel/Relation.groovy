@@ -6,7 +6,7 @@ class Relation {
 
     final String source_name // source entity name
     final String target_name // target entity name
-    final String relation_name
+    final String name
     int source_min
     int source_max
     int target_min
@@ -19,10 +19,10 @@ class Relation {
         this.source_name = source_name
         this.target_name = target_name
         if (relation_name == "") {
-            this.relation_name = Table.normalize("$source_name to $target_name")
+            this.name = Table.normalize("$source_name to $target_name")
         }
         else {
-            this.relation_name = Table.normalize(relation_name)
+            this.name = Table.normalize(relation_name)
         }
         source_min = 1
         source_max = 1
@@ -55,6 +55,6 @@ class Relation {
     }
 
     String toString() {
-        return relation_name
+        return name
     }
 }

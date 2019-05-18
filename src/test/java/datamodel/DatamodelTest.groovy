@@ -176,4 +176,11 @@ class DatamodelTest {
         }
     }
 
+    @Test
+    void dependecy_order() {
+        new TVSeriesDatamodel().with {
+            println getEntitiesByDependencyOrder()
+        }
+    }
+
 }

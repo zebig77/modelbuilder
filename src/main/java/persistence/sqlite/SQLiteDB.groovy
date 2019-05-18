@@ -1,5 +1,8 @@
 package persistence.sqlite
 
+import datamodel.Datamodel
+import datamodel.Entity
+import datamodel.Relation
 import datamodel.relational.Column
 import datamodel.relational.RelationalModel
 import datamodel.relational.Table
@@ -34,8 +37,17 @@ class SQLiteDB {
         cnx.createStatement().execute(sb.toString())
     }
 
-    void load_sample(Table t) {
-
+    void load_samples(Datamodel dm) {
+        // load entity samples starting by the less dependent first
+        def rm = dm.relational()
+        dm.getEntitiesByDependencyOrder().each { Entity e ->
+            Table t = rm.tables[Table.normalize(e.name)]
+            t.load(e.samples)
+        }
+        dm.getRelations() { Relation r ->
+            Table t = rm.tables[Table.normalize(r.name)]
+            t.load(r.samples)
+        }
     }
 
     static String column_def(Column c) {
